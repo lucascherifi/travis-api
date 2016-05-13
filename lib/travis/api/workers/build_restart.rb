@@ -1,4 +1,4 @@
-require 'sidekiq/worker'
+require 'sidekiq'
 require 'multi_json'
 
 module Travis
@@ -6,10 +6,8 @@ module Travis
     class BuildRestart
       class ProcessingError < StandardError; end
 
-      include ::Sidekiq::Worker
-      sidekiq_options queue: :build_restarts
-
       def perform(data)
+        p " ==== perform called"
         user = User.find(data['user_id'])
 
         ::Sidekiq::Client.push(
