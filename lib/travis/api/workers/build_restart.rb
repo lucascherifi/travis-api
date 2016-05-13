@@ -6,8 +6,8 @@ module Travis
     class BuildRestart
       class ProcessingError < StandardError; end
 
-      def perform(data)
-        p " ==== perform called"
+      def perform_async(data)
+        p " ==== perform async called"
         user = User.find(data['user_id'])
 
         ::Sidekiq::Client.push(
