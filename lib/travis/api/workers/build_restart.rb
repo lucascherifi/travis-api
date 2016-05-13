@@ -11,7 +11,12 @@ module Travis
 
       def perform(data)
         user = User.find(data['user_id'])
-        Travis.service(:reset_model, user, build_id: data['id']).run
+
+        ::Sidekiq::Client.push(
+              'queue'   => 'build_restarts',
+              'class'   => 'Travis::Hub::Sidekiq::Worker',
+              'args'    => [:restart,{user: user, build_id: data['id']}]
+            )
       end
 
     end
